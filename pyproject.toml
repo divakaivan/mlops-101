@@ -1,0 +1,20 @@
+[project]
+name = "mlops-101"
+version = "0.1.0"
+description = "MLOps 101: For Students by Students"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "google-cloud-storage>=3.0.0",
+    "pandas>=2.2.3",
+    "requests>=2.32.3",
+]
+
+[build-system]
+requires = [
+  "setuptools>=72.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where =["src"]
+include = ["make_data*"]
