@@ -1,34 +1,95 @@
 import pandas as pd
-from datetime import datetime
 from google.cloud import storage
+from abc import ABC, abstractmethod
+import requests
+from io import BytesIO
 
-class NYCTaxiDataLoader:
-    def __init__(self, start_date: str, end_date: str, bucket_name: str, destination_blob_name: str):
-        self.start_date = datetime.strptime(start_date, '%Y-%m-%d')
-        self.end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+class DataSaver(ABC):
+    @abstractmethod
+    def save(self, data: pd.DataFrame, file_name: str):
+        pass
+
+
+class NYCTaxiDataFetcher:
+    BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data/"
+
+    def __init__(self, taxi_type: str = "green"):
+        """
+        Constructor for fetching NYC Taxi data.
+
+        Args:
+            taxi_type (str, optional): Type of taxi data (e.g., "green", "yellow"). Defaults to "green".
+        """
+        self.taxi_type = taxi_type
+
+    def _construct_url(self, year: int, month: int) -> str:
+        """Constructs the URL dynamically for a given year and month."""
+        file_name = f"{self.taxi_type}_tripdata_{year}-{month:02d}.parquet"
+        return self.BASE_URL + file_name
+
+    def fetch(self, year: int, month: int) -> pd.DataFrame:
+        """
+        Fetches the Parquet file and loads it into a Pandas DataFrame.
+        Assumes data comes in Parquet format.
+
+        Args:
+            year (int): Year for which to fetch the data (e.g., 2020)
+            month (int): Month for which to fetch the data (e.g., 1 for January)
+
+        Raises:
+            ValueError: If the request fails or no data is found.
+
+        Returns:
+            pd.DataFrame: Pandas DataFrame containing the fetched data.
+        """
+        url = self._construct_url(year, month)
+
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  
+            return pd.read_parquet(BytesIO(response.content))
+
+        except requests.exceptions.RequestException as e:
+            raise ValueError(f"Request failed: {e}")
+
+        except pd.errors.EmptyDataError:
+            raise ValueError(f"No data found at {url}")
+
+class ParquetDataSaver(DataSaver):
+    def save(self, data: pd.DataFrame, file_name: str):
+        """
+        Save pandas data to parquet file.
+        Currently only accepts pandas dataframes.
+
+        Args:
+            data (pd.DataFrame): Dataframe to save
+            file_name (str): Name of the file
+        """
+        data.to_parquet(file_name, index=False)
+        print(f"Data saved to {file_name}")
+
+
+class GCSUploader:
+    def __init__(self, bucket_name: str):
+        """
+        (Constructor) Upload data to Google Cloud Storage bucket
+
+        Args:
+            bucket_name (str): Name of the bucket
+        """
+        self.client = storage.Client()
         self.bucket_name = bucket_name
-        self.destination_blob_name = destination_blob_name
-        self.base_url = "https://s3.amazonaws.com/nyc-tlc/trip+data/"
-        self.local_file_name = "nyc_taxi_data.csv"
 
-    def generate_date_range(self):
-        return pd.date_range(start=self.start_date, end=self.end_date, freq='M')
+    def upload(self, file_name: str, destination: str):
+        """
+        Upload file to Google Cloud Storage bucket
 
-    def load_data(self):
-        date_range = self.generate_date_range()
-        data_frames = []
-        for date in date_range:
-            file_name = f"yellow_tripdata_{date.year}-{date.month:02d}.csv"
-            url = self.base_url + file_name
-            df = pd.read_csv(url)
-            data_frames.append(df)
-        return pd.concat(data_frames, ignore_index=True)
-
-    def save_data_to_csv(self, data):
-        data.to_csv(self.local_file_name, index=False)
-
-    def upload_to_gcs(self):
-        client = storage.Client()
-        bucket = client.bucket(self.bucket_name)
-        blob = bucket.blob(self.destination_blob_name)
-        blob.upload_from_filename(self.local_file_name)
+        Args:
+            file_name (str): Name of the file to upload
+            destination (str): Destination path in the bucket
+        """
+        bucket = self.client.bucket(self.bucket_name)
+        blob = bucket.blob(destination)
+        blob.upload_from_filename(file_name)
+        print(f"File {file_name} uploaded to gs://{self.bucket_name}/{destination}")
