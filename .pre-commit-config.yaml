@@ -15,14 +15,15 @@ repos:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix, --show-fixes]
       - id: ruff-format
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.5.29
+    hooks:
+      - id: uv-lock
   - repo: local
-    hooks: 
-      - id: pytest-check
-        name: pytest-check
-        entry: pytest
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: uv run pytest
         language: system
+        types: [python]
         pass_filenames: false
-        always_run: true
-        args: [
-            "uv run pytest"
-        ]
