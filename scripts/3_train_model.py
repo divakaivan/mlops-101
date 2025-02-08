@@ -3,10 +3,13 @@ import logging
 import os
 
 import mlflow
+from dotenv import load_dotenv
 
 from make_data.gcs_connector import GCSConnector
 from make_model.model_trainer import ModelTrainer
 from project_config import ProjectConfig, Tags
+
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
