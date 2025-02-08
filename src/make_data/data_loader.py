@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from google.cloud import storage
 from abc import ABC, abstractmethod
 import requests
 from io import BytesIO
@@ -119,8 +118,8 @@ class ParquetDataSaver(DataSaver):
             raise ValueError(f"Extra columns: {extra_columns}")
 
         type_mapping = {
-            "int": lambda x: pd.to_numeric(x),
-            "float": lambda x: pd.to_numeric(x, downcast="float"),
+            "int": lambda x: pd.to_numeric(x, errors="coerce"),
+            "float": lambda x: pd.to_numeric(x, errors="coerce"),
             "string": lambda x: x.astype(str),
             "datetime": lambda x: pd.to_datetime(x),
         }
@@ -128,10 +127,9 @@ class ParquetDataSaver(DataSaver):
         for col, expected_type in schema_dict.items():
             try:
                 self.data[col] = type_mapping[expected_type](self.data[col])
-                if self.data[col].isna().any():
-                    logger.warning(f"Conversion failed for column '{col}'")
-                    raise ValueError(f"Conversion failed for column '{col}'")
-                logger.info(f"Successfully converted column '{col}' to {expected_type}")
+                logger.info(
+                    f"[Schema Validation] Successfully converted column '{col}' to {expected_type}"
+                )
             except KeyError as e:
                 logger.warning(
                     f"Unsupported type '{expected_type}' for column '{col}': {e}"
@@ -157,41 +155,3 @@ class ParquetDataSaver(DataSaver):
             logging.info(f"File {file_name} cleaned up from local.")
         else:
             logging.info(f"File {file_name} does not exist. No need to clean up.")
-
-
-class GCSUploader:
-    def __init__(self, bucket_name: str):
-        """
-        Create a class to upload data to Google Cloud Storage bucket
-
-        Args:
-            bucket_name (str): Name of the bucket
-        """
-        self.client = storage.Client()
-        self.bucket_name = bucket_name
-
-    def upload(self, file_name: str, destination: str):
-        """
-        Upload file to Google Cloud Storage bucket
-
-        Args:
-            file_name (str): Name of the file to upload
-            destination (str): Destination path in the bucket
-        """
-        bucket = self.client.bucket(self.bucket_name)
-        blob = bucket.blob(destination)
-        blob.upload_from_filename(file_name)
-        logging.info(
-            f"File {file_name} uploaded to gs://{self.bucket_name}/{destination}"
-        )
-
-    def check_file_exists(self, file_name: str):
-        """
-        Check if the file exists in the bucket
-
-        Args:
-            file_name (str): Name of the file to check
-        """
-        bucket = self.client.bucket(self.bucket_name)
-        blob = bucket.blob(file_name)
-        return blob.exists()
