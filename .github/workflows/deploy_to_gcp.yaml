@@ -6,9 +6,9 @@ on:
       - main
 
 env:
-  PROJECT_ID: fake-app-323017
+  PROJECT_ID: mlops-101
   REGION: asia-northeast3
-  GAR_LOCATION: asia-northeast3-docker.pkg.dev/fake-app-323017/fastapi-taxi-fare-predictor
+  GAR_LOCATION: asia-northeast3-docker.pkg.dev/mlops-101/fastapi-taxi-fare-predictor
   IMAGE_NAME: fastapi-taxi-fare-predictor
   IMAGE_TAG: latest
 
