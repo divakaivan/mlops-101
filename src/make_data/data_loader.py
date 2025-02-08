@@ -60,9 +60,11 @@ class NYCTaxiDataFetcher:
 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request failed: {e}")
+            return 1
 
         except pd.errors.EmptyDataError:
             logger.error(f"No data found at {url}")
+            return 1
 
 
 class ParquetDataSaver(DataSaver):
