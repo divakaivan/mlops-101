@@ -1,4 +1,4 @@
-name: Deploy API to GCP
+name: Push API to Artifact Registry
 
 on:
   push:

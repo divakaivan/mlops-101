@@ -1,4 +1,4 @@
-name: Deploy API to GCP
+name: Deploy API to GKE
 
 on:
   push:
@@ -49,5 +49,5 @@ jobs:
 
     - name: Deploy to GKE
       run: |
-        gcloud container clusters get-credentials mlops-101-my-autopilot-cluster --region ${{ env.REGION }}
-        kubectl apply -f resources.yaml
+        gcloud container clusters get-credentials mlops-101-my-autopilot-cluster --region asia-northeast3 --project mlops-101
+        kubectl apply -f src/make_api/resources.yaml
