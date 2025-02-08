@@ -1,3 +1,4 @@
+import argparse
 import logging
 import os
 
@@ -12,9 +13,26 @@ logger = logging.getLogger(__name__)
 
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI_DEV"))
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--git_sha",
+    action="store",
+    default=None,
+    type=str,
+    required=True,
+)
+parser.add_argument(
+    "--git_branch",
+    action="store",
+    default=None,
+    type=str,
+    required=True,
+)
+args = parser.parse_args()
+
 config = ProjectConfig.from_yaml("project-config.yaml")
 
-tags_dict = {"git_sha": "abcd12345", "branch": "main"}  # placeholders
+tags_dict = {"git_sha": args.git_sha, "branch": args.git_branch}
 tags = Tags(**tags_dict)
 
 gcs = GCSConnector(bucket_name=config.gcs_processed_taxi_data_bucket_name)
