@@ -1,0 +1,30 @@
+name: Deploy API to GCP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Authenticate with GCP
+      env:
+        GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      run: |
+        echo "$GCP_SERVICE_ACCOUNT_KEY" > gcp-key.json
+        gcloud auth activate-service-account --key-file=gcp-key.json
+        export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
+
+    - name: Push to Artifact Registry
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+      run: |
+        gcloud auth configure-docker
+        docker build -t gcr.io/$PROJECT_ID/uv-api:$GITHUB_SHA .
+        docker push gcr.io/$PROJECT_ID/uv-api:$GITHUB_SHA
