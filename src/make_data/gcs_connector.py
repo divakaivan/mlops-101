@@ -63,3 +63,9 @@ class GCSConnector:
                 all_dataframes.append(df)
         df = pd.concat(all_dataframes, ignore_index=True)
         return df
+
+    def read_one_from_gcs(self, file_name: str):
+        destination = f"gs://{self.bucket_name}/{file_name}"
+        df = pd.read_parquet(destination)
+        logging.info(f"Loaded {file_name} from GCS")
+        return df
