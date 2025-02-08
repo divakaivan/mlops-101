@@ -5,13 +5,18 @@ on:
     branches:
       - main
 
+env:
+  PROJECT_ID: fake-app-323017
+  REGION: asia
+  GAR_LOCATION: asia-docker.pkg.dev/mlops-101/fastapi-taxi-fare-predictor
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - name: "Checkout"
+      uses: "actions/checkout@v3"
 
     - name: Authenticate with GCP
       env:
@@ -21,10 +26,19 @@ jobs:
         gcloud auth activate-service-account --key-file=gcp-key.json
         export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
 
-    - name: Push to Artifact Registry
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
-      run: |
-        gcloud auth configure-docker
-        docker build -t asia-docker.pkg.dev/mlops-101/fastapi-taxi-fare-predictor/$PROJECT_ID/taxi-fare-fastapi:$GITHUB_SHA .
-        docker push asia-docker.pkg.dev/mlops-101/fastapi-taxi-fare-predictor/$PROJECT_ID/taxi-fare-fastapi:$GITHUB_SHA
+    - name: "Set up Cloud SDK"
+      uses: "google-github-actions/setup-gcloud@v1"
+
+    - name: "Use gcloud CLI"
+      run: "gcloud info"
+
+    - name: "Docker auth"
+      run: |-
+        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+    - name: Build image
+      run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}
+      working-directory: src/make_api
+
+    - name: Push image
+      run: docker push ${{ env.GAR_LOCATION }}
