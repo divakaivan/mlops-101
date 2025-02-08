@@ -7,6 +7,7 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-yaml
+        exclude: (?x)^(src/make_api/resources.yaml)$
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/astral-sh/ruff-pre-commit
