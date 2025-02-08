@@ -32,19 +32,3 @@ spec:
           image: asia-northeast3-docker.pkg.dev/mlops-101/fastapi-taxi-fare-predictor/fastapi-taxi-fare-predictor:latest
           ports:
             - containerPort: 8000
-          resources:
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 10
