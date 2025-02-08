@@ -59,29 +59,6 @@ resource "google_storage_bucket" "mlops-101-processed-data" {
   force_destroy = true
 }
 
-resource "google_storage_bucket" "mlops_101_mlflow_artifacts" {
-  name          = var.mlops_101_mlflow_artifacts
-  location      = var.location
-
-  storage_class = var.gcs_storage_class
-  uniform_bucket_level_access = true
-
-  versioning {
-    enabled     = true
-  }
-
-  lifecycle_rule {
-    action {
-      type = "Delete"
-    }
-    condition {
-      age = 30  // days
-    }
-  }
-
-  force_destroy = true
-}
-
 resource "google_compute_instance" "mlops-101-mlflow-server" {
   name         = "mlops-101-mlflow-server"
   machine_type = "e2-small"
@@ -108,7 +85,8 @@ resource "google_compute_instance" "mlops-101-mlflow-server" {
     apt-get update >> /var/log/startup-script.log 2>&1
     apt-get install -y python3-pip >> /var/log/startup-script.log 2>&1
     pip3 install mlflow==2.20.1 >> /var/log/startup-script.log 2>&1
-    mlflow server -h 0.0.0.0 -p 5000 --backend-store-uri ${var.mlflow_backend_store_uri} --default-artifact-root ${var.mlflow_artifact_location} >> /var/log/startup-script.log 2>&1
+    pip3 install google-cloud-storage >> /var/log/startup-script.log 2>&1
+    mlflow server --backend-store-uri ${var.mlflow_backend_store_uri} -h 0.0.0.0 -p 5000 >> /var/log/startup-script.log 2>&1
     echo "MLflow server started" >> /var/log/startup-script.log 2>&1
     EOT
 }
@@ -120,7 +98,7 @@ resource "google_compute_firewall" "mlflow-server-firewall" {
 
   allow {
     protocol = "tcp"
-    ports    = ["5000"]
+    ports    = ["22", "5000"]
   }
 
   target_tags = ["mlflow"]
