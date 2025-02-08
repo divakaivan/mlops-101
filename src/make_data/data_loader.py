@@ -14,7 +14,11 @@ logger = logging.getLogger(__name__)
 
 class DataSaver(ABC):
     @abstractmethod
-    def save(self, data: pd.DataFrame, file_name: str):
+    def save(self, file_name: str):
+        pass
+
+    @abstractmethod
+    def validate_schema(schema: list[dict]):
         pass
 
     @abstractmethod
@@ -68,7 +72,16 @@ class NYCTaxiDataFetcher:
 
 
 class ParquetDataSaver(DataSaver):
-    def save(self, data: pd.DataFrame, file_name: str):
+    def __init__(self, data: pd.DataFrame):
+        """
+        Create a class to save data to parquet file.
+
+        Args:
+            data (pd.DataFrame): Dataframe to save
+        """
+        self.data = data
+
+    def save(self, file_name: str):
         """
         Save pandas data to parquet file.
         Currently only accepts pandas dataframes.
@@ -77,8 +90,60 @@ class ParquetDataSaver(DataSaver):
             data (pd.DataFrame): Dataframe to save
             file_name (str): Name of the file
         """
-        data.to_parquet(file_name, index=False)
+        self.data.to_parquet(file_name, index=False)
         logging.info(f"Data saved to {file_name}")
+
+    def validate_schema(self, schema: list[dict]):
+        """
+        Validate and attempt to convert the schema of the data.
+
+        Args:
+            schema (list): List of column definitions from the schema
+
+        Raises:
+            ValueError: If schema validation or conversion fails
+        """
+        schema_dict = {col["name"]: col["type"] for col in schema}
+
+        expected_columns = set(schema_dict.keys())
+        actual_columns = set(self.data.columns)
+
+        missing_columns = expected_columns - actual_columns
+        extra_columns = actual_columns - expected_columns
+
+        if missing_columns:
+            logger.error(f"Missing columns: {missing_columns}")
+            raise ValueError(f"Missing columns: {missing_columns}")
+        if extra_columns:
+            logger.error(f"Extra columns: {extra_columns}")
+            raise ValueError(f"Extra columns: {extra_columns}")
+
+        type_mapping = {
+            "int": lambda x: pd.to_numeric(x),
+            "float": lambda x: pd.to_numeric(x, downcast="float"),
+            "string": lambda x: x.astype(str),
+            "datetime": lambda x: pd.to_datetime(x),
+        }
+
+        for col, expected_type in schema_dict.items():
+            try:
+                self.data[col] = type_mapping[expected_type](self.data[col])
+                if self.data[col].isna().any():
+                    logger.warning(f"Conversion failed for column '{col}'")
+                    raise ValueError(f"Conversion failed for column '{col}'")
+                logger.info(f"Successfully converted column '{col}' to {expected_type}")
+            except KeyError as e:
+                logger.warning(
+                    f"Unsupported type '{expected_type}' for column '{col}': {e}"
+                )
+                raise ValueError(
+                    f"Unsupported type {expected_type} for column '{col}'"
+                ) from e
+            except Exception as e:
+                logger.warning(f"Conversion failed for column '{col}' due to {str(e)}")
+                raise ValueError(f"Conversion failed for column '{col}'") from e
+
+        logger.info("Schema validated and converted successfully")
 
     def cleanup(self, file_name: str):
         """
@@ -89,9 +154,9 @@ class ParquetDataSaver(DataSaver):
         """
         if os.path.exists(file_name):
             os.remove(file_name)
-            logging.info(f"File {file_name} removed successfully.")
+            logging.info(f"File {file_name} cleaned up from local.")
         else:
-            logging.info(f"File {file_name} does not exist.")
+            logging.info(f"File {file_name} does not exist. No need to clean up.")
 
 
 class GCSUploader:

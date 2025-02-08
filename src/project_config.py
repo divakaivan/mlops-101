@@ -9,6 +9,7 @@ class ProjectConfig(BaseModel):
     taxi_data_years: list[int]
     taxi_data_months: list[int]
     taxi_type: str
+    green_taxi_raw_schema: list[dict]
 
     @classmethod
     def from_yaml(cls, config_path: str):
