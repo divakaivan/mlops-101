@@ -36,13 +36,12 @@ jobs:
           echo "$GCP_SERVICE_ACCOUNT_KEY" > gcp-key.json
           gcloud auth activate-service-account --key-file=gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
-      - name: Debug - List Files
-        run: ls -R
+
       - name: Train Model
         env:
           MLFLOW_TRACKING_URI_DEV: ${{ secrets.MLFLOW_TRACKING_URI_DEV }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
         run: |
-          uv run python script/3_train_model.py \
+          uv run python scripts/3_train_model.py \
             --git_sha $(git rev-parse HEAD) \
             --git_branch $(git rev-parse --abbrev-ref HEAD)
