@@ -1,0 +1,3 @@
+fastapi[standard]>=0.115.8
+uvicorn
+mlflow==2.20.1
