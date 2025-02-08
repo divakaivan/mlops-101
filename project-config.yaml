@@ -60,3 +60,8 @@ cat_features:
 
 target:
   - fare_amount
+
+train_file_name: "green_taxi_train_set.parquet"
+test_file_name: "green_taxi_test_set.parquet"
+
+experiment_name: "taxi_fare_prediction"

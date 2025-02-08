@@ -23,6 +23,9 @@ def valid_yaml_config():
     cat_features: []
     target:
       - fare_amount
+    train_file_name: "train.csv"
+    test_file_name: "test.csv"
+    experiment_name: "my-experiment"
     """
 
 
@@ -60,6 +63,9 @@ def test_project_config_from_valid_yaml(valid_yaml_config):
     assert config.num_features == ["col1", "col2"]
     assert config.cat_features == []
     assert config.target == ["fare_amount"]
+    assert config.train_file_name == "train.csv"
+    assert config.test_file_name == "test.csv"
+    assert config.experiment_name == "my-experiment"
 
 
 def test_project_config_missing_field(invalid_yaml_config_missing_field):
