@@ -51,3 +51,5 @@ terraform.rc
 .env
 
 uv.lock
+mlruns
+mlartifacts
