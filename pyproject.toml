@@ -10,6 +10,7 @@ dependencies = [
     "pre-commit>=4.1.0",
     "pyarrow>=19.0.0",
     "pydantic>=2.10.6",
+    "pytest>=8.3.4",
     "requests>=2.32.3",
 ]
 
