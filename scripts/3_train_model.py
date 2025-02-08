@@ -3,19 +3,15 @@ import logging
 import os
 
 import mlflow
-from dotenv import load_dotenv
 
 from make_data.gcs_connector import GCSConnector
 from make_model.model_trainer import ModelTrainer
 from project_config import ProjectConfig, Tags
 
-load_dotenv()
-
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
-logging.info(os.environ("MLFLOW_TRACKING_URI"))
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
 
 parser = argparse.ArgumentParser()
 parser.add_argument(

@@ -6,7 +6,7 @@ on:
       - train_model
 
 jobs:
-  build_and_test:
+  train_model:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
 
       - name: Train Model
         env:
-          MLFLOW_TRACKING_URI_DEV: ${{ secrets.MLFLOW_TRACKING_URI_DEV }}
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
         run: |
           uv run python scripts/3_train_model.py \
