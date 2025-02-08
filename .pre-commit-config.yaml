@@ -19,11 +19,3 @@ repos:
     rev: 0.5.29
     hooks:
       - id: uv-lock
-  - repo: local
-    hooks:
-      - id: pytest
-        name: pytest
-        entry: uv run pytest
-        language: system
-        types: [python]
-        pass_filenames: false
