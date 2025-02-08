@@ -8,7 +8,9 @@ on:
 env:
   PROJECT_ID: fake-app-323017
   REGION: asia-northeast3
-  GAR_LOCATION: asia-northeast3-docker.pkg.dev/mlops-101/fastapi-taxi-fare-predictor
+  GAR_LOCATION: asia-northeast3-docker.pkg.dev/fake-app-323017/fastapi-taxi-fare-predictor
+  IMAGE_NAME: fastapi-taxi-fare-predictor
+  IMAGE_TAG: latest
 
 jobs:
   deploy:
@@ -34,8 +36,8 @@ jobs:
         gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
     - name: Build image
-      run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}
+      run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
       working-directory: src/make_api
 
     - name: Push image
-      run: docker push ${{ env.GAR_LOCATION }}
+      run: docker push ${{ env.GAR_LOCATION }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
