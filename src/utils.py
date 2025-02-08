@@ -24,7 +24,7 @@ def outlier_imputer(df: pd.DataFrame, column_list: list[str], iqr_factor: int) -
 
         df.loc[df[col] > upper_threshold, col] = upper_threshold
 
-        return df
+    return df
 
 
 def rush_hourizer(row: pd.Series) -> int:
