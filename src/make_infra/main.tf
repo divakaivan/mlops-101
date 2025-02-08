@@ -106,7 +106,7 @@ resource "google_compute_firewall" "mlflow-server-firewall" {
 }
 
 resource "google_artifact_registry_repository" "fastapi-taxi-fare-predictor" {
-  location      = "asia"
+  location      = "asia-northeast3"
   repository_id = "fastapi-taxi-fare-predictor"
   description   = "FastAPI Taxi Fare Predictor"
   format        = "DOCKER"
