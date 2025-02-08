@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - train_model
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install the dependencies
+        run: |
+          uv sync --all-extras
+
+      - name: Run pre-commit checks
+        run: |
+          uv run pre-commit run --all-files
+
+      - name: Run pytest
+        run: |
+          uv run pytest
+
+      - name: Authenticate with GCP
+        env:
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        run: |
+          echo "$GCP_SERVICE_ACCOUNT_KEY" > gcp-key.json
+          gcloud auth activate-service-account --key-file=gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
+
+      - name: Train Model
+        env:
+          MLFLOW_TRACKING_URI_DEV: ${{ secrets.MLFLOW_TRACKING_URI_DEV }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+        run: |
+          uv run python script/3_train_model.py \
+            --git_sha $(git rev-parse HEAD) \
+            --git_branch $(git rev-parse --abbrev-ref HEAD)
