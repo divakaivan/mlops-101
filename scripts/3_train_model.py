@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+logging.info(os.getenv("MLFLOW_TRACKING_URI"))
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
