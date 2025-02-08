@@ -11,6 +11,9 @@ def valid_yaml_config():
     taxi_data_years: [2021, 2022]
     taxi_data_months: [1, 2, 3]
     taxi_type: "yellow"
+    green_taxi_raw_schema:
+      - name: "VendorId"
+        type: "int"
     """
 
 
