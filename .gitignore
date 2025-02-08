@@ -53,3 +53,5 @@ terraform.rc
 uv.lock
 mlruns
 mlartifacts
+
+tmp.ipynb
