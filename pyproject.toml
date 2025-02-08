@@ -40,10 +40,7 @@ select = [
 ]
 ignore = [
     "E501",  # line-too-long
-    "src/make_api/resources.yaml"
 ]
 
 [tool.ruff.format]
 indent-style = "space"
-
-exclude = ["*.yaml"]
