@@ -18,7 +18,7 @@ raw_gcs_bucket_connector = GCSConnector(bucket_name=config.gcs_raw_data_bucket_n
 df = raw_gcs_bucket_connector.read_many_from_gcs(taxi_type="green")
 data_processor = DataProcessor(df=df, config=config)
 data_processor.process_data()
-train_set, test_set = data_processor.split_data()
+train_set, test_set = data_processor.split_data(test_size=0.2, random_state=42)
 
 processed_gcs_bucket_connector = GCSConnector(
     bucket_name=config.gcs_processed_taxi_data_bucket_name
