@@ -1,0 +1,53 @@
+name: Deploy API to GCP
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: mlops-101
+  REGION: asia-northeast3
+  GAR_LOCATION: asia-northeast3-docker.pkg.dev/mlops-101/fastapi-taxi-fare-predictor
+  IMAGE_NAME: fastapi-taxi-fare-predictor
+  IMAGE_TAG: latest
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: "Checkout"
+      uses: "actions/checkout@v3"
+
+    - name: Authenticate with GCP
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
+    - name: "Set up Cloud SDK"
+      uses: "google-github-actions/setup-gcloud@v1"
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        install_components: "gke-gcloud-auth-plugin"
+        export_default_credentials: true
+
+    - name: "Use gcloud CLI"
+      run: "gcloud info"
+
+    - name: "Docker auth"
+      run: |-
+        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+    - name: Build image
+      run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+      working-directory: src/make_api
+
+    - name: Push image
+      run: docker push ${{ env.GAR_LOCATION }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+    - name: Deploy to GKE
+      run: |
+        gcloud container clusters get-credentials mlops-101-my-autopilot-cluster --region ${{ env.REGION }}
+        kubectl apply -f resources.yaml
