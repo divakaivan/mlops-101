@@ -6,20 +6,27 @@ from project_config import ProjectConfig
 
 @pytest.fixture
 def valid_yaml_config():
-    return """
+    yield """
     gcs_raw_data_bucket_name: "my-bucket"
+    gcs_processed_taxi_data_bucket_name: "processed-bucket"
     taxi_data_years: [2021, 2022]
     taxi_data_months: [1, 2, 3]
     taxi_type: "yellow"
     green_taxi_raw_schema:
       - name: "VendorId"
         type: "int"
+    num_features:
+      - col1
+      - col2
+    cat_features: []
+    target:
+      - fare_amount
     """
 
 
 @pytest.fixture
 def invalid_yaml_config_missing_field():
-    return """
+    yield """
     taxi_data_years: [2021, 2022]
     taxi_data_months: [1, 2, 3]
     taxi_type: "yellow"
@@ -28,7 +35,7 @@ def invalid_yaml_config_missing_field():
 
 @pytest.fixture
 def invalid_yaml_config_wrong_type():
-    return """
+    yield """
     gcs_raw_data_bucket_name: "my-bucket"
     taxi_data_years: "2021, 2022"  # Should be a list[int], but it's a string
     taxi_data_months: [1, 2, 3]
@@ -43,9 +50,14 @@ def test_project_config_from_valid_yaml(valid_yaml_config):
         config = ProjectConfig.from_yaml(temp_file.name)
 
     assert config.gcs_raw_data_bucket_name == "my-bucket"
+    assert config.gcs_processed_taxi_data_bucket_name == "processed-bucket"
     assert config.taxi_data_years == [2021, 2022]
     assert config.taxi_data_months == [1, 2, 3]
     assert config.taxi_type == "yellow"
+    assert config.green_taxi_raw_schema == [{"name": "VendorId", "type": "int"}]
+    assert config.num_features == ["col1", "col2"]
+    assert config.cat_features == []
+    assert config.target == ["fare_amount"]
 
 
 def test_project_config_missing_field(invalid_yaml_config_missing_field):
