@@ -35,3 +35,26 @@ resource "google_storage_bucket" "mlflow-101-raw-data" {
 
   force_destroy = true
 }
+
+resource "google_storage_bucket" "mlflow-101-processed-data" {
+  name          = var.gcs_processed_taxi_data_bucket_name
+  location      = var.location
+
+  storage_class = var.gcs_storage_class
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled     = true
+  }
+
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      age = 30  // days
+    }
+  }
+
+  force_destroy = true
+}

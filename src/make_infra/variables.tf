@@ -22,6 +22,11 @@ variable "gcs_raw_taxi_data_bucket_name" {
     default = "mlops_101_raw_taxi_data"
 }
 
+variable "gcs_processed_taxi_data_bucket_name" {
+    description = "Bucket name for processed taxi data"
+    default = "mlops_101_processed_taxi_data"
+}
+
 variable "gcs_storage_class" {
     description = "Bucket Storage Class"
     default = "STANDARD"
