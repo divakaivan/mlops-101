@@ -1,9 +1,7 @@
 import pandas as pd
 
 
-def outlier_imputer(
-    df: pd.DataFrame, column_list: list[str], iqr_factor: int
-) -> pd.DataFrame:
+def outlier_imputer(df: pd.DataFrame, column_list: list[str], iqr_factor: int) -> pd.DataFrame:
     """
     Impute upper-limit values in specified columns based on their interquartile range.
     The IQR is computed for each column in column_list and values exceeding

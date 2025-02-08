@@ -1,8 +1,10 @@
 import os
-import pytest
-import pandas as pd
 from io import BytesIO
+
+import pandas as pd
+import pytest
 import requests_mock
+
 from make_data.data_loader import NYCTaxiDataFetcher, ParquetDataSaver
 
 
@@ -102,9 +104,7 @@ def test_unsupported_type(sample_data):
         {"name": "salary", "type": "boolean"},
     ]
     validator = ParquetDataSaver(sample_data)
-    with pytest.raises(
-        ValueError, match="Unsupported type boolean for column 'salary'"
-    ):
+    with pytest.raises(ValueError, match="Unsupported type boolean for column 'salary'"):
         validator.validate_schema(invalid_schema)
 
 

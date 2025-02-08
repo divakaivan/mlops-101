@@ -1,12 +1,12 @@
-import yaml
 import logging
+
+import yaml
+
 from make_data.data_loader import NYCTaxiDataFetcher, ParquetDataSaver
 from make_data.gcs_connector import GCSConnector
 from project_config import ProjectConfig
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 

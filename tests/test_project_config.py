@@ -1,6 +1,8 @@
+from tempfile import NamedTemporaryFile
+
 import pytest
 from pydantic import ValidationError
-from tempfile import NamedTemporaryFile
+
 from project_config import ProjectConfig
 
 

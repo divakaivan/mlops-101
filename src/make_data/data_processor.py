@@ -1,13 +1,13 @@
 import logging
 from typing import Optional, Union
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
+
 from project_config import ProjectConfig
 from utils import outlier_imputer, rush_hourizer
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -26,16 +26,10 @@ class DataProcessor:
         """Process raw data"""
         self.df.drop_duplicates(inplace=True)
 
-        self.df["lpep_pickup_datetime"] = pd.to_datetime(
-            self.df["lpep_pickup_datetime"]
-        )
-        self.df["lpep_dropoff_datetime"] = pd.to_datetime(
-            self.df["lpep_dropoff_datetime"]
-        )
+        self.df["lpep_pickup_datetime"] = pd.to_datetime(self.df["lpep_pickup_datetime"])
+        self.df["lpep_dropoff_datetime"] = pd.to_datetime(self.df["lpep_dropoff_datetime"])
 
-        self.df["duration"] = (
-            self.df["lpep_dropoff_datetime"] - self.df["lpep_pickup_datetime"]
-        )
+        self.df["duration"] = self.df["lpep_dropoff_datetime"] - self.df["lpep_pickup_datetime"]
         self.df["duration"] = self.df["duration"].dt.total_seconds() // 60
 
         self.df.loc[self.df["fare_amount"] < 0, "fare_amount"] = 0
@@ -44,21 +38,13 @@ class DataProcessor:
         self.df = outlier_imputer(self.df, ["fare_amount"], 6)
         self.df = outlier_imputer(self.df, ["duration"], 6)
 
-        self.df["pickup_dropoff"] = (
-            self.df["PULocationID"].astype(str)
-            + " "
-            + self.df["DOLocationID"].astype(str)
-        )
-        grouped = self.df.groupby("pickup_dropoff").mean(numeric_only=True)[
-            ["trip_distance"]
-        ]
+        self.df["pickup_dropoff"] = self.df["PULocationID"].astype(str) + " " + self.df["DOLocationID"].astype(str)
+        grouped = self.df.groupby("pickup_dropoff").mean(numeric_only=True)[["trip_distance"]]
         grouped_dict = grouped.to_dict()["trip_distance"]
         self.df["mean_distance"] = self.df["pickup_dropoff"]
         self.df["mean_distance"] = self.df["mean_distance"].map(grouped_dict)
 
-        grouped = self.df.groupby("pickup_dropoff").mean(numeric_only=True)[
-            ["duration"]
-        ]
+        grouped = self.df.groupby("pickup_dropoff").mean(numeric_only=True)[["duration"]]
         grouped_dict = grouped.to_dict()["duration"]
         self.df["mean_duration"] = self.df["pickup_dropoff"]
         self.df["mean_duration"] = self.df["mean_duration"].map(grouped_dict)
@@ -93,7 +79,5 @@ class DataProcessor:
             Union[pd.DataFrame, pd.DataFrame]: Train and test pandas dataframes
         """
 
-        train_set, test_set = train_test_split(
-            self.df, test_size=test_size, random_state=random_state
-        )
+        train_set, test_set = train_test_split(self.df, test_size=test_size, random_state=random_state)
         return train_set, test_set

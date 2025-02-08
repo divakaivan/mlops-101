@@ -1,12 +1,11 @@
-from typing import Optional
 import logging
-from google.cloud import storage
-import pandas as pd
 from io import BytesIO
+from typing import Optional
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+import pandas as pd
+from google.cloud import storage
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 

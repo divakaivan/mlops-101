@@ -1,4 +1,5 @@
 from typing import Optional
+
 import yaml
 from pydantic import BaseModel
 

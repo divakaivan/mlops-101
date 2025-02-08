@@ -1,13 +1,12 @@
-import os
-import pandas as pd
-from abc import ABC, abstractmethod
-import requests
-from io import BytesIO
 import logging
+import os
+from abc import ABC, abstractmethod
+from io import BytesIO
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+import pandas as pd
+import requests
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -127,16 +126,10 @@ class ParquetDataSaver(DataSaver):
         for col, expected_type in schema_dict.items():
             try:
                 self.data[col] = type_mapping[expected_type](self.data[col])
-                logger.info(
-                    f"[Schema Validation] Successfully converted column '{col}' to {expected_type}"
-                )
+                logger.info(f"[Schema Validation] Successfully converted column '{col}' to {expected_type}")
             except KeyError as e:
-                logger.warning(
-                    f"Unsupported type '{expected_type}' for column '{col}': {e}"
-                )
-                raise ValueError(
-                    f"Unsupported type {expected_type} for column '{col}'"
-                ) from e
+                logger.warning(f"Unsupported type '{expected_type}' for column '{col}': {e}")
+                raise ValueError(f"Unsupported type {expected_type} for column '{col}'") from e
             except Exception as e:
                 logger.warning(f"Conversion failed for column '{col}' due to {str(e)}")
                 raise ValueError(f"Conversion failed for column '{col}'") from e
