@@ -111,3 +111,10 @@ resource "google_artifact_registry_repository" "fastapi-taxi-fare-predictor" {
   description   = "FastAPI Taxi Fare Predictor"
   format        = "DOCKER"
 }
+
+resource "google_container_cluster" "mlops-101-my-autopilot-cluster" {
+  name     = "mlops-101-my-autopilot-cluster"
+  location = "asia-northeast3"
+  project  = var.project
+  enable_autopilot = true
+}
