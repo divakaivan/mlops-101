@@ -1,6 +1,7 @@
 import yaml
 from pydantic import BaseModel
 
+
 class ProjectConfig(BaseModel):
     """Project configuration"""
 
