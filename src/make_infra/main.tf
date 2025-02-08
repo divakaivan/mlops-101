@@ -104,3 +104,10 @@ resource "google_compute_firewall" "mlflow-server-firewall" {
   target_tags = ["mlflow"]
   source_ranges = [ "0.0.0.0/0" ]
 }
+
+resource "google_artifact_registry_repository" "fastapi-taxi-fare-predictor" {
+  location      = "asia"
+  repository_id = "fastapi-taxi-fare-predictor"
+  description   = "FastAPI Taxi Fare Predictor"
+  format        = "DOCKER"
+}
