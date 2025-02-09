@@ -60,7 +60,6 @@ from pydantic import BaseModel
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
 print(os.getenv("ASD"))
 model_uri = "models:/taxi_fare_prediction.taxi_fare_model@latest-model"
-pipe = mlflow.sklearn.load_model(model_uri)
 
 app = FastAPI()
 
@@ -82,6 +81,7 @@ async def read_root():
 
 @app.post("/predict")
 async def predict_one(data: InferenceInput) -> dict[str, float]:
+    pipe = mlflow.sklearn.load_model(model_uri)
     df_input = pd.DataFrame([data.dict()])
 
     prediction = pipe.predict(df_input)
