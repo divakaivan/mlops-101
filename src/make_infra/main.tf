@@ -59,6 +59,29 @@ resource "google_storage_bucket" "mlops-101-processed-data" {
   force_destroy = true
 }
 
+resource "google_storage_bucket" "mlops-101-api-logs" {
+  name          = var.api_logs_bucket
+  location      = var.location
+
+  storage_class = var.gcs_storage_class
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled     = true
+  }
+
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      age = 30  // days
+    }
+  }
+
+  force_destroy = true
+}
+
 resource "google_compute_instance" "mlops-101-mlflow-server" {
   name         = "mlops-101-mlflow-server"
   machine_type = "e2-small"
@@ -117,4 +140,10 @@ resource "google_container_cluster" "mlops-101-my-autopilot-cluster" {
   location = "asia-northeast3"
   project  = var.project
   enable_autopilot = true
+}
+
+resource "google_logging_project_sink" "model_api_logs_to_gcs" {
+  name = "model_api_logs_to_gcs"
+  destination = "storage.googleapis.com/${var.api_logs_bucket}"
+  filter = "SEARCH(\"[Prediction Input]\") OR SEARCH(\"[Prediction Output]\")"
 }

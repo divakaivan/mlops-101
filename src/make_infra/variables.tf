@@ -27,6 +27,11 @@ variable "gcs_processed_taxi_data_bucket_name" {
     default = "mlops_101_processed_taxi_data"
 }
 
+variable "api_logs_bucket" {
+    description = "Bucket name for API logs"
+    default = "mlops_101_api_logs"
+}
+
 variable "gcs_storage_class" {
     description = "Bucket Storage Class"
     default = "STANDARD"
