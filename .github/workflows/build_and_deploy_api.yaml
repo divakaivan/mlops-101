@@ -17,6 +17,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Set up environment variables
+        run: echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> $GITHUB_ENV
+
       - uses: actions/checkout@v3
 
       - name: Install uv
