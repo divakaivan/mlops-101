@@ -129,7 +129,7 @@ resource "google_compute_firewall" "mlflow-server-firewall" {
 }
 
 resource "google_artifact_registry_repository" "fastapi-taxi-fare-predictor" {
-  location      = "asia-northeast3"
+  location      = var.location_region
   repository_id = "fastapi-taxi-fare-predictor"
   description   = "FastAPI Taxi Fare Predictor"
   format        = "DOCKER"
@@ -137,9 +137,10 @@ resource "google_artifact_registry_repository" "fastapi-taxi-fare-predictor" {
 
 resource "google_container_cluster" "mlops-101-my-autopilot-cluster" {
   name     = "mlops-101-my-autopilot-cluster"
-  location = "asia-northeast3"
+  location = var.location_region
   project  = var.project
   enable_autopilot = true
+  deletion_protection = false
 }
 
 resource "google_logging_project_sink" "model_api_logs_to_gcs" {

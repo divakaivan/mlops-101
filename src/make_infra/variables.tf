@@ -17,6 +17,11 @@ variable "location" {
     default = "ASIA"
 }
 
+variable "location_region" {
+    description = "Project Location Region"
+    default = "asia-northeast3"
+}
+
 variable "gcs_raw_taxi_data_bucket_name" {
     description = "Bucket name for raw taxi data"
     default = "mlops_101_raw_taxi_data"
