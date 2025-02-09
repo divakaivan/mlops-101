@@ -13,11 +13,11 @@ model_uri = "models:/taxi_fare_prediction.taxi_fare_model@latest-model"
 
 
 @lru_cache
-def get_model():
+def get_model(model_uri):
     return mlflow.sklearn.load_model(model_uri)
 
 
-pipe = get_model()
+pipe = get_model(model_uri)
 
 app = FastAPI()
 
