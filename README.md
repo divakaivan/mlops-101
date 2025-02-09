@@ -1,4 +1,4 @@
-# tools: Google Cloud Platform (VM Engine, GCS, Artifact Registry, Kubernetes Engine), MLFlow, GitHub Actions, FastAPI, EvidentlyAI, Terraform, Scikit-learn, Docker
+![logo](project_info/mlops-101-logo.png)
 
 ## MLOps 101
 

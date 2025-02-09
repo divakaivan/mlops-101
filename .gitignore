@@ -49,7 +49,7 @@ terraform.rc
 .terraform.lock.hcl
 
 .env
-
+.DS_Store
 uv.lock
 mlruns
 mlartifacts
