@@ -38,4 +38,4 @@ jobs:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
         run: |
-          uv run src/make_monitoring/create_dashboard.py
+          uv run src/make_monitoring/create_report.py
