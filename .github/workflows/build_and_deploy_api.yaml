@@ -39,6 +39,7 @@ jobs:
 
   build_and_deploy:
     runs-on: ubuntu-latest
+    needs: test
     steps:
 
     - name: "Checkout"
@@ -49,7 +50,7 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
 
-    - name: "Set up Cloud SDK"
+    - name: Set up Cloud SDK
       uses: "google-github-actions/setup-gcloud@v1"
       with:
         project_id: ${{ env.PROJECT_ID }}
@@ -57,10 +58,10 @@ jobs:
         install_components: "gke-gcloud-auth-plugin"
         export_default_credentials: true
 
-    - name: "Use gcloud CLI"
+    - name: Use gcloud CLI
       run: "gcloud info"
 
-    - name: "Docker auth"
+    - name: Docker auth
       run: |-
         gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
