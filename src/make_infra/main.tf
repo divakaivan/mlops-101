@@ -146,4 +146,5 @@ resource "google_logging_project_sink" "model_api_logs_to_gcs" {
   name = "model_api_logs_to_gcs"
   destination = "storage.googleapis.com/${var.api_logs_bucket}"
   filter = "SEARCH(\"[Prediction Input]\") OR SEARCH(\"[Prediction Output]\")"
+  unique_writer_identity = true
 }
