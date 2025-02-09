@@ -1,5 +1,3 @@
-from typing import Optional
-
 import yaml
 from pydantic import BaseModel
 
@@ -14,7 +12,7 @@ class ProjectConfig(BaseModel):
     taxi_type: str
     green_taxi_raw_schema: list[dict]
     num_features: list[str]
-    cat_features: Optional[list[str]]
+    cat_features: list[str]
     target: list[str]
     train_file_name: str
     test_file_name: str

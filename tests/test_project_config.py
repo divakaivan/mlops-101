@@ -20,7 +20,7 @@ def valid_yaml_config():
     num_features:
       - col1
       - col2
-    cat_features: []
+    cat_features: [vendor_id]
     target:
       - fare_amount
     train_file_name: "train.csv"
@@ -61,7 +61,7 @@ def test_project_config_from_valid_yaml(valid_yaml_config):
     assert config.taxi_type == "yellow"
     assert config.green_taxi_raw_schema == [{"name": "VendorId", "type": "int"}]
     assert config.num_features == ["col1", "col2"]
-    assert config.cat_features == []
+    assert config.cat_features == ["vendor_id"]
     assert config.target == ["fare_amount"]
     assert config.train_file_name == "train.csv"
     assert config.test_file_name == "test.csv"
