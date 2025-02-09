@@ -63,7 +63,7 @@ target:
 
 train_file_name_destination: "green_taxi_train_set"
 test_file_name_destination: "green_taxi_test_set"
-train_file_name: "green_taxi_train_set2025-02-09_15:49:13.559248.parquet"
-test_file_name: "green_taxi_test_set2025-02-09_15:49:16.996177.parquet"
+train_file_name: "green_taxi_train_set2025-02-09_08:19:17.494919.parquet"
+test_file_name: "green_taxi_test_set2025-02-09_08:19:30.980237.parquet"
 
 experiment_name: "taxi_fare_prediction"

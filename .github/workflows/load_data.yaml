@@ -59,7 +59,6 @@ jobs:
 
       - name: Load New Month Data
         env:
-          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
         run: |
           uv run python scripts/1_load_monthly_data.py
@@ -90,7 +89,6 @@ jobs:
 
       - name: Update Train Test Sets
         env:
-          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
         run: |
           uv run python scripts/2_process_data.py
