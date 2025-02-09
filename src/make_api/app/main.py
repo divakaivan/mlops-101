@@ -17,8 +17,6 @@ def get_model(model_uri):
     return mlflow.sklearn.load_model(model_uri)
 
 
-pipe = get_model(model_uri)
-
 app = FastAPI()
 
 
@@ -41,7 +39,7 @@ async def read_root():
 async def predict_one(data: InferenceInput) -> dict[str, float]:
     try:
         df_input = pd.DataFrame([data.dict()])  # pd df might be overkill
-        prediction = pipe.predict(df_input)
+        prediction = get_model(model_uri).predict(df_input)
         return {"prediction": prediction[0]}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Prediction failed: {str(e)}") from e
