@@ -34,6 +34,7 @@ def setup_trainer():
 
 
 def test_feature_engineering(setup_trainer):
+    """Test feature engineering method"""
     trainer = setup_trainer
     trainer.feature_engineering()
 
@@ -46,6 +47,7 @@ def test_feature_engineering(setup_trainer):
 
 
 def test_register_model(setup_trainer):
+    """Test register model method"""
     trainer = setup_trainer
     trainer.run_id = "test_run_id"
 

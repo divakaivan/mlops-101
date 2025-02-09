@@ -37,6 +37,7 @@ def valid_schema():
 
 
 def test_nyc_taxi_data_fetcher_fetch(requests_mock_fixture, sample_data):
+    """Test the case where the fetch is successful."""
     year, month = 2023, 1
     fetcher = NYCTaxiDataFetcher("green")
     url = fetcher._construct_url(year, month)
@@ -63,6 +64,7 @@ def test_nyc_taxi_data_fetcher_fetch_failure(requests_mock_fixture):
 
 
 def test_parquet_data_saver_save(sample_data):
+    """Test the case where the data is saved successfully."""
     saver = ParquetDataSaver(sample_data)
     file_name = "test.parquet"
 
@@ -74,6 +76,7 @@ def test_parquet_data_saver_save(sample_data):
 
 
 def test_validate_schema_success(sample_data, valid_schema):
+    """Test the case where the schema is valid."""
     validator = ParquetDataSaver(sample_data)
     validator.validate_schema(valid_schema)
     assert sample_data["id"].dtype == "int64"
@@ -83,6 +86,7 @@ def test_validate_schema_success(sample_data, valid_schema):
 
 
 def test_missing_columns(sample_data, valid_schema):
+    """Test the case where the schema is missing columns."""
     sample_data.drop(columns=["age"], inplace=True)
     validator = ParquetDataSaver(sample_data)
     with pytest.raises(ValueError, match="Missing columns: {'age'}"):
@@ -90,6 +94,7 @@ def test_missing_columns(sample_data, valid_schema):
 
 
 def test_extra_columns(sample_data, valid_schema):
+    """Test the case where the schema has extra columns."""
     sample_data["extra"] = [1, 2, 3]
     validator = ParquetDataSaver(sample_data)
     with pytest.raises(ValueError, match="Extra columns: {'extra'}"):
@@ -97,6 +102,7 @@ def test_extra_columns(sample_data, valid_schema):
 
 
 def test_unsupported_type(sample_data):
+    """Test the case where the schema has an unsupported type."""
     invalid_schema = [
         {"name": "id", "type": "int"},
         {"name": "name", "type": "string"},
@@ -109,6 +115,7 @@ def test_unsupported_type(sample_data):
 
 
 def test_parquet_data_saver_cleanup(sample_data):
+    """Test the case where the file is removed successfully."""
     saver = ParquetDataSaver(sample_data)
     file_name = "test.parquet"
 

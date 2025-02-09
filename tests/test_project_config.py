@@ -51,6 +51,7 @@ def invalid_yaml_config_wrong_type():
 
 
 def test_project_config_from_valid_yaml(valid_yaml_config):
+    """Test that ProjectConfig can be created from a valid YAML file"""
     with NamedTemporaryFile(mode="w", delete=False) as temp_file:
         temp_file.write(valid_yaml_config)
         temp_file.flush()
@@ -71,6 +72,7 @@ def test_project_config_from_valid_yaml(valid_yaml_config):
 
 
 def test_project_config_missing_field(invalid_yaml_config_missing_field):
+    """Test that ProjectConfig raises a ValidationError when a required field is missing"""
     with NamedTemporaryFile(mode="w", delete=False) as temp_file:
         temp_file.write(invalid_yaml_config_missing_field)
         temp_file.flush()
@@ -80,6 +82,7 @@ def test_project_config_missing_field(invalid_yaml_config_missing_field):
 
 
 def test_project_config_wrong_type(invalid_yaml_config_wrong_type):
+    """Test that ProjectConfig raises a ValidationError when a field has the wrong type"""
     with NamedTemporaryFile(mode="w", delete=False) as temp_file:
         temp_file.write(invalid_yaml_config_wrong_type)
         temp_file.flush()
