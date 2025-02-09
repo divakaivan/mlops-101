@@ -1,15 +1,20 @@
-# model_uri = f"models:/{model_name}@{model_version_alias}"
-# model = mlflow.sklearn.load_model(model_uri)
+import os
 
+import mlflow
 import uvicorn
 from fastapi import FastAPI
+
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+
+model_uri = "models:/taxi_fare_prediction.taxi_fare_model@latest-model"
+model = mlflow.sklearn.load_model(model_uri)
 
 app = FastAPI()
 
 
 @app.get("/")
 async def read_root():
-    return {"Hello": "CICD World"}
+    return {"Hello": "Visit /docs for API documentation"}
 
 
 @app.get("/predict")
