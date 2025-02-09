@@ -5,6 +5,7 @@ description = "MLOps 101: For Students by Students"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "evidently>=0.6.2",
     "gcsfs>=2025.2.0",
     "google-cloud-storage>=3.0.0",
     "ipykernel>=6.29.5",
