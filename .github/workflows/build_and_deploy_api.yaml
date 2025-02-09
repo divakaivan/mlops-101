@@ -1,4 +1,4 @@
-name: Deploy API to GKE
+name: Build & Deploy Model API to GKE
 
 on:
   push:
@@ -13,7 +13,31 @@ env:
   IMAGE_TAG: latest
 
 jobs:
-  deploy:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install the dependencies
+        run: |
+          uv sync --all-extras
+
+      - name: Run pre-commit checks
+        run: |
+          uv run pre-commit run --all-files
+
+      - name: Run pytest
+        run: |
+          uv run pytest
+
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
 

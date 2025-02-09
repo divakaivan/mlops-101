@@ -1,4 +1,4 @@
-name: Train Model CI
+name: Train Model
 
 on:
   push:
