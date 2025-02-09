@@ -24,6 +24,7 @@ def setup_trainer():
     config = MagicMock()
     config.experiment_name = "test_experiment"
     config.num_features = ["feature1", "feature2"]
+    config.cat_features = ["vendor_id"]
     config.target = "fare_amount"
 
     tags = MagicMock()
@@ -40,7 +41,7 @@ def test_feature_engineering(setup_trainer):
     assert not trainer.X_test.empty
     assert not trainer.y_train.empty
     assert not trainer.y_test.empty
-    assert trainer.X_train.shape[1] == 2
+    assert trainer.X_train.shape[1] == 3
     assert trainer.y_train.shape[0] == 3
 
 

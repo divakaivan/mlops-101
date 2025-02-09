@@ -27,9 +27,9 @@ class ModelTrainer:
         self.train_set["vendor_id"] = self.train_set["vendor_id"].astype(str)
         self.test_set["vendor_id"] = self.test_set["vendor_id"].astype(str)
 
-        self.X_train = self.train_set[self.config.num_features]
+        self.X_train = self.train_set[self.config.num_features + self.config.cat_features]
         self.y_train = self.train_set[self.config.target]
-        self.X_test = self.test_set[self.config.num_features]
+        self.X_test = self.test_set[self.config.num_features + self.config.cat_features]
         self.y_test = self.test_set[self.config.target]
 
         logger.info(f"X_train shape: {self.X_train.shape}")

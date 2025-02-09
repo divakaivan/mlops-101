@@ -60,7 +60,7 @@ class DataProcessor:
 
         self.df.rename(columns={"VendorID": "vendor_id"}, inplace=True)
 
-        relevant_cols = self.config.num_features + self.config.target
+        relevant_cols = self.config.num_features + self.config.cat_features + self.config.target
 
         self.df = self.df.loc[:, relevant_cols]
         self.df.dropna(inplace=True)
