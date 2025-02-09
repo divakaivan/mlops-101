@@ -2,6 +2,7 @@ import logging
 
 import mlflow
 import pandas as pd
+from mlflow.models import infer_signature
 from mlflow.tracking import MlflowClient
 from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression
@@ -43,7 +44,7 @@ class ModelTrainer:
         preprocessor = ColumnTransformer(
             transformers=[
                 ("num", StandardScaler(), self.config.num_features),
-                ("cat", OneHotEncoder(handle_unknown="ignore"), ["vendor_id"]),
+                ("cat", OneHotEncoder(handle_unknown="ignore"), self.config.cat_features),
             ]
         )
         pipe = Pipeline(steps=[("preprocessor", preprocessor), ("model", LinearRegression())])
@@ -69,7 +70,7 @@ class ModelTrainer:
             mlflow.log_metric("rmse", rmse)
             mlflow.log_metric("mae", mae)
             mlflow.log_metric("r2_score", r2)
-            # signature = infer_signature(self.X_train, y_pred)
+            signature = infer_signature(self.X_train, y_pred)
 
             mlflow_train_set = mlflow.data.from_pandas(self.train_set)
             mlflow.log_input(mlflow_train_set, context="training")
@@ -77,6 +78,7 @@ class ModelTrainer:
                 sk_model=pipe,
                 artifact_path=self.artifact_path,
                 input_example=self.X_train.head(1),
+                signature=signature,
             )
 
     def register_model(self):
