@@ -23,6 +23,8 @@ def valid_yaml_config():
     cat_features: [vendor_id]
     target:
       - fare_amount
+    train_file_name_destination: "train/"
+    test_file_name_destination: "test/"
     train_file_name: "train.csv"
     test_file_name: "test.csv"
     experiment_name: "my-experiment"

@@ -14,6 +14,8 @@ class ProjectConfig(BaseModel):
     num_features: list[str]
     cat_features: list[str]
     target: list[str]
+    train_file_name_destination: str
+    test_file_name_destination: str
     train_file_name: str
     test_file_name: str
     experiment_name: str
