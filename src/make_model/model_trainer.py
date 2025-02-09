@@ -73,7 +73,7 @@ class ModelTrainer:
             signature = infer_signature(self.X_train, y_pred)
 
             mlflow_train_set = mlflow.data.from_pandas(self.train_set)
-            mlflow.log_input(mlflow_train_set, context="training")
+            mlflow.log_input(mlflow_train_set, context="training", tags={"name_detail": self.config.train_file_name})
             mlflow.sklearn.log_model(
                 sk_model=pipe,
                 artifact_path=self.artifact_path,
