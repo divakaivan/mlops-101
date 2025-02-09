@@ -1,5 +1,4 @@
 import logging
-import sys
 from datetime import datetime, timedelta
 
 import yaml
@@ -30,5 +29,5 @@ else:
         data_checker.validate_schema(config.green_taxi_raw_schema)
         gcs_connector.upload(data, file_name)
     except Exception as e:
-        logger.error(f"Data might not exist yet for {year}-{month:02d}. Error: {e}")
-        sys.exit(1)
+        logger.error(f"Data might not exist yet for {year}-{month:02d}. Skipping")
+        raise e

@@ -23,10 +23,12 @@ jobs:
         run: |
           uv sync --all-extras
 
-      - name: Authenticate with GCP
+      - name: Setup Environment Variables
         env:
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
         run: |
+          echo "EVIDENTLY_PROJECT_ID=${{ secrets.EVIDENTLY_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "EVIDENTLY_API_TOKEN=${{ secrets.EVIDENTLY_API_TOKEN }}" >> $GITHUB_ENV
           echo "$GCP_SERVICE_ACCOUNT_KEY" > gcp-key.json
           gcloud auth activate-service-account --key-file=gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
