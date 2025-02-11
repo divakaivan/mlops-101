@@ -55,6 +55,60 @@ The choice of tools is a combination of what I learned are industry standard, wh
 
 ![evidently](project_info/evidently.png)
 
+### Structure
+
+```shell
+mlops-101
+├── .env.sample
+├── .github # Contains the Github Action workflows
+│   └── workflows/
+│       ├── build_and_deploy_api.yaml
+│       ├── generate_evidently_report.yaml
+│       ├── load_data.yaml
+│       └── train_model.yaml
+├── .gitignore
+├── .pre-commit-config.yaml
+├── .python-version
+├── README.md
+├── project-config.yaml # Contains variables/params used in different pipelines
+├── pyproject.toml
+├── scripts/ # Contains the executable flows
+│   ├── 0_load_batch_data.py
+│   ├── 1_load_monthly_data.py
+│   ├── 2_process_data.py
+│   └── 3_train_model.py
+├── src/
+│   ├── make_api/ # Contains the FastAPI model endpoint deployment files
+│   │   ├── Dockerfile
+│   │   ├── app/
+│   │   │   └── main.py
+│   │   ├── requirements.txt
+│   │   └── resources.yaml
+│   ├── make_data/ # Contains code related to dealing with data
+│   │   ├── data_loader.py
+│   │   ├── data_processor.py
+│   │   └── gcs_connector.py
+│   ├── make_infra/ # Contains Terraform setup
+│   │   ├── main.tf
+│   │   └── variables.tf
+│   ├── make_model/ # Contains ModelTrainer class
+│   │   └── model_trainer.py
+│   ├── make_monitoring/ # Contains code to produce EvidentlyAI reports
+│   │   └── create_report.py
+│   ├── project_config.py
+│   └── utils.py
+├── tests/
+│   ├── conftest.py
+│   ├── test_api.py
+│   ├── test_data_loader.py
+│   ├── test_data_processor.py
+│   ├── test_gcs_connector.py
+│   ├── test_model_trainer.py
+│   ├── test_project_config.py
+│   └── test_utils.py
+└── uv.lock
+```
+
 ### Basic Setup
 
 Local Setup (on Mac):
