@@ -8,21 +8,26 @@ import pandas as pd
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+ml_models = {}
 
-model_uri = "models:/taxi_fare_prediction.taxi_fare_model@latest-model"
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+    
+    model_uri = "models:/taxi_fare_prediction.taxi_fare_model@latest-model"
+    ml_models["latest_model"] = mlflow.sklearn.load_model(model_uri)
+    
+    yield
+    
+    ml_models.clear()
 
 
-@lru_cache
-def get_model(model_uri):
-    return mlflow.sklearn.load_model(model_uri)
-
-
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 
 class PredictionInput(BaseModel):
@@ -42,9 +47,9 @@ class OutputItem(BaseModel):
     message: str
 
 
-@app.get("/")
-async def read_root():
-    return {"message": "Welcome to the Taxi Fare Prediction API!", "docs": "/docs"}
+@app.get("/health")
+async def check_health():
+    return {"status": "healthy"}
 
 
 @app.post("/predict")
@@ -52,7 +57,7 @@ async def predict_one(data: PredictionInput) -> OutputItem:
     try:
         df_input = pd.DataFrame([data.dict()])  # pd df might be overkill
         logger.info(f"[Prediction Input] Received input: {df_input}")
-        prediction = get_model(model_uri).predict(df_input)
+        prediction = ml_models['latest_model'].predict(df_input)
 
         if prediction[0] <= 0:
             logger.error("[Prediction Output] Prediction failed: Negative prediction")
