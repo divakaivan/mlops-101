@@ -2,7 +2,7 @@
 
 ## MLOps 101
 
-I learned a tonne from great teachers about taking models from notebook to production (full list below), and I wanted to make something that not just combines all of them, but will also allow me to run a mini-course on MLOps in my university club (Mar-Jun '25). This is still a work in progress and I welcome any feedback/pull requests/issues.
+I learned a tonne from great teachers about taking models from notebook to production (full list below), and I wanted to make something that not just combines all of them, but will also allow me to run a mini-course on MLOps in my university club (Mar-Apr '25). I welcome any feedback/pull requests/issues.
 
 The choice of tools is a combination of what I learned are industry standard, what I'm comfortable with, and frankly ~ tools I find cool.
 
@@ -50,6 +50,10 @@ The choice of tools is a combination of what I learned are industry standard, wh
 ![input](project_info/fastapi_input.png)
 
 ![output](project_info/fastapi_output.png)
+
+**To consider**
+
+- Design the API to follow the [Open Inference Protocol (V2 Inference Protocol)](https://kserve.github.io/website/latest/modelserving/data_plane/v2_protocol/)
 
 ### EvidentlyAI Report
 
